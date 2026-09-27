@@ -2,6 +2,8 @@ package com.eclipse.simplecrud.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,8 +20,9 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final UserRepository userRepository;
 
-    public List<UserDto> getAll() {
-        return userRepository.findAllByOrderByIdAsc().stream()
+    @Transactional()
+    public List<UserDto> getAll(int page, int items) {
+        return userRepository.findAll(PageRequest.of(page, items, Sort.by("id").ascending())).stream()
             .map(u -> UserDto.builder()
                     .id(u.getId())
                     .name(u.getName())
